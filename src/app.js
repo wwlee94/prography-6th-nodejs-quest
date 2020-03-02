@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyparser from 'body-parser';
+
 const app = express();
 
 // app 미들웨어
@@ -13,7 +14,7 @@ app.use(function (req, res, next) {
 });
 
 // 라우트 설정
-import todos from './router/todos.js';
+import todos from './router/todos';
 app.use('/todos', todos);
 
 // 로그, 에러 핸들러 
