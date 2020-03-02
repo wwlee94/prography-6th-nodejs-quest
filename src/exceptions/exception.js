@@ -32,9 +32,18 @@ class NotFoundDataError extends ExceptionError {
     }
 };
 
+class InvalidParameterError extends ExceptionError {
+    constructor (message, status) { 
+        super();
+        this.status = status || 422;
+        this.message = message || '유효하지 않은 요청 파라미터입니다.';
+    }
+}
+
 export {
     Base,
     ExceptionError,
     NotFoundParameterError,
-    NotFoundDataError
+    NotFoundDataError,
+    InvalidParameterError
 };
