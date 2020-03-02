@@ -1,7 +1,7 @@
 const util = {};
 
 // 반환 메시지
-util.responseMsg = function(data){
+util.responseMsg = (data) => {
     return{
         status: 200,
         data: data
