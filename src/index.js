@@ -1,5 +1,5 @@
+import db from './db'; //먼저 호출 되어야함
 import app from './app';
-import db from './db';
 import dotenv from 'dotenv';
 dotenv.config();
 
