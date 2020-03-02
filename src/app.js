@@ -18,16 +18,16 @@ import todos from './router/todos';
 app.use('/todos', todos);
 
 // 로그, 에러 핸들러 
-// function logHandler(err, req, res, next) {
-//   // if (process.env.NODE_ENV === "test") 
-//   console.error('[' + new Date() + ']\n' + err.stack);
-//   next(err);
-// }
+function logHandler(err, req, res, next) {
+  // if (process.env.NODE_ENV === "test") 
+  console.error('[' + new Date() + ']\n' + err.message);
+  next(err);
+}
 function errorHandler(err, req, res, next) {
   res.status(err.status || 500);
   res.type('json').send(JSON.stringify({ error: err || 'Uncaught Error !' }, null, 4));
 }
-// app.use(logHandler);
+app.use(logHandler);
 app.use(errorHandler);
 
 export default app;

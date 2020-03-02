@@ -8,3 +8,33 @@ class Base extends Error {
     }
 };
 
+class ExceptionError extends Base {
+    constructor (message, status) {
+        super();
+        this.status = status || 400;
+        this.message = message || 'Uncaught Error !';
+    }
+};
+
+class NotFoundParameterError extends ExceptionError {
+    constructor (message, status) { 
+        super();
+        this.status = status || 400;
+        this.message = message || '필요한 요청 파라미터가 없습니다 !';
+    }
+};
+
+class NotFoundDataError extends ExceptionError {
+    constructor (message, status) { 
+        super();
+        this.status = status || 400;
+        this.message = message || '검색된 데이터가 없습니다.';
+    }
+};
+
+export {
+    Base,
+    ExceptionError,
+    NotFoundParameterError,
+    NotFoundDataError
+};
