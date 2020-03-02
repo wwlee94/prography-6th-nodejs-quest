@@ -14,16 +14,16 @@ function findAllTodo(req, res, next){
     Todo.find({})
         .then(todo => {
             if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할일이 없습니다 !'))
-            res.send(util.responseMsg(todo));
+            res.send(todo);
         })
         .catch(err => { return next(new exception.ExceptionError(err.message)); });
 };
 
 // id로 특정 할일 검색
 function findTodoById(req, res, next){
-    Todo.findOne({ "_id": req.params.todoId })
+    Todo.findOne({ "id": req.params.todoId })
         .then(todo => {
-            if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할일이 없습니다 !'))
+            if (!todo) return next(new exception.NotFoundDataError('존재하지 않는 ID입니다 !'))
             res.send(util.responseMsg(todo));
         })
         .catch(err => { return next(new exception.ExceptionError(err.message)); });    
@@ -42,7 +42,7 @@ function createTodo(req, res, next){
     const todo = new Todo(req.body);
     todo.save()
         .then(todo => {
-            res.send(util.responseMsg(`[${todo.title}] 할 일을 등록했습니다 !`))
+            res.send(todo);
         })
         .catch(err => { return next(new exception.ExceptionError(err.message)); });
 };
