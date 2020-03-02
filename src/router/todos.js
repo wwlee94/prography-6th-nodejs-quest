@@ -11,17 +11,17 @@ router.post('/', validateParams, createTodo);
 router.put('/:todoId', updateTodo);
 router.put('/:todoId/complete', updateTodoComplete);
 
-// 모든 할일 검색
+// 모든 할 일 검색
 function findAllTodo(req, res, next){
     Todo.find({})
         .then(todo => {
-            if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할일이 없습니다 !'))
+            if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할 일이 없습니다 !'))
             res.send(todo);
         })
         .catch(err => { return next(new exception.ExceptionError(err.message)); });
 };
 
-// id로 특정 할일 검색
+// id로 특정 할 일 검색
 function findTodoById(req, res, next){
     Todo.findOne({ "id": req.params.todoId })
         .then(todo => {
@@ -34,12 +34,12 @@ function findTodoById(req, res, next){
 // 파라미터 검증
 function validateParams(req, res, next){
     if (!Object.keys(req.body).length) return next(new exception.NotFoundParameterError('등록에 필요한 파라미터 정보가 없습니다. !'));
-    if (!req.body.title) return next(new exception.InvalidParameterError('할일 제목을 입력해주세요 !'));
-    if (!req.body.description) return next(new exception.InvalidParameterError('할일 내용을 입력해주세요 !'));
+    if (!req.body.title) return next(new exception.InvalidParameterError('할 일 제목을 입력해주세요 !'));
+    if (!req.body.description) return next(new exception.InvalidParameterError('할 일 내용을 입력해주세요 !'));
     else next();
 };
 
-// 할일 추가
+// 할 일 추가
 function createTodo(req, res, next){
     const todo = new Todo(req.body);
     todo.save()
@@ -47,9 +47,8 @@ function createTodo(req, res, next){
         .catch(err => { return next(new exception.ExceptionError(err.message)); });
 };
 
-// 할일 수정
+// 할 일 수정
 function updateTodo(req, res, next){
-    // 넘어온 ID로 저장된 할일이 있는지 검사후 저장
     Todo.findOne({ "id": req.params.todoId })
         .then(todo => { validateTodoAndUpdate(todo, req, res); })
         .catch(err => { 
@@ -58,7 +57,7 @@ function updateTodo(req, res, next){
          });
 };
 
-// 검증 후 기존 데이터를 수정
+// 검증 후 Todo 정보 변경
 function validateTodoAndUpdate(todo, req, res){
     let keys = Object.keys(req.body);
     if (!todo) throw  new exception.NotFoundDataError('존재하지 않는 ID입니다 !');
@@ -70,8 +69,21 @@ function validateTodoAndUpdate(todo, req, res){
         .catch(err => { throw new exception.ExceptionError(err.message); });
 }
 
-// 할일 완료
+// 할 일 완료
 function updateTodoComplete(req, res, next){
-    
+    Todo.findOne({ "id": req.params.todoId })
+        .then(todo => { validateIsCompleteAndUpdate(todo, req, res); })
+        .catch(err => {
+            return next(new exception.ExceptionError(err.message));    
+        });
+}
+// 검증 후 isComplete 변경
+function validateIsCompleteAndUpdate(todo, req, res){
+    if (!todo) throw new exception.NotFoundDataError('존재하지 않는 ID입니다 !');
+    if (todo.isCompleted) throw new exception.InvalidParameterError('이미 완료된 할 일입니다.');
+    todo.isCompleted = true;
+    todo.save()
+        .then(todo => { res.send(todo); })
+        .catch(err => { throw new exception.ExceptionError(err.message); });
 }
 export default router;

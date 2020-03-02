@@ -44,5 +44,6 @@ export {
     Base,
     ExceptionError,
     NotFoundParameterError,
-    NotFoundDataError
+    NotFoundDataError,
+    InvalidParameterError
 };
