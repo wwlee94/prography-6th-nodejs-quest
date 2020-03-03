@@ -1,6 +1,9 @@
 /**
  * 테스트 시나리오에 맞춰서 순차 실행
  */
+import db from '../../src/db';
+import Todo from '../../src/models/todo';
+import Comment from '../../src/models/comment';
 
 // 할일 생성
 import './Todo/createTodo.spec'
@@ -28,3 +31,12 @@ import './Todo/createTodo.spec'
 
 // 할일 삭제
 import './Todo/removeTodo.spec'
+
+// DB 종료, 사용했던 테이블 제거
+afterAll(async (done) => {
+    await Todo.collection.drop();
+    await Comment.collection.drop();
+    await db.collections['identitycounters'].drop();
+    await db.close();
+    done();
+})

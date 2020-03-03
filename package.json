@@ -27,7 +27,7 @@
     "nodemon": "^2.0.2"
   },
   "scripts": {
-    "test": "jest ./test/features/index.spec.js",
+    "test": "NODE_ENV=test jest ./test/features/index.spec.js",
     "start": "nodemon"
   },
   "repository": {

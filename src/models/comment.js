@@ -15,7 +15,6 @@ var comment = mongoose.Schema({
     contents: {
         type: String,
         required: [true, '댓글을 입력해주세요 !'],
-        trim: true
     }
 },
     {
