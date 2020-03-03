@@ -8,6 +8,7 @@ const router = express.Router();
 router.post('/:todoId/comments', validateParams, createComment);
 router.get('/:todoId/comments', findAllByCommentById);
 router.get('/:todoId/comments/:commentId', findCommentById);
+router.put('/:todoId/comments/:commentId', updateComment);
 
 // 파라미터 검증
 async function validateParams(req, res, next) {
@@ -62,6 +63,27 @@ async function findCommentById(req, res, next) {
             .where('todoId').equals(req.params.todoId);
         if (!comment) return next(new exception.NotFoundDataError('해당 ID로 검색된 댓글이 없습니다. 다시 입력해주세요 !'));
         res.send(comment);
+    } catch (err) {
+        return next(new exception.ExceptionError(err.message));
+    }
+};
+
+// 댓글 수정
+async function updateComment(req, res, next) {
+    if (!Object.keys(req.body).length) return next(new exception.NotFoundParameterError('댓글 수정에 필요한 파라미터 정보가 없습니다. !'));
+    if (!req.body.contents) return next(new exception.InvalidParameterError('수정할 댓글 내용을 입력해주세요 !'));
+    try {
+        let comment = await Comment.findOneAndUpdate(
+                { id: Number(req.params.commentId), todoId: Number(req.params.todoId) },
+                { contents: req.body.contents },
+                { new: true }
+            );
+        res.send(comment);
+        // Chaining 방식
+        // let comment = await Comment
+        //     .where('id').equals(req.params.commentId)
+        //     .where('todoId').equals(req.params.todoId)
+        //     .update({ contents: req.body.contents }).setOptions({ new: true});
     } catch (err) {
         return next(new exception.ExceptionError(err.message));
     }
