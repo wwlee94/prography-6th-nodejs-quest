@@ -4,34 +4,12 @@ import Todo from '../models/todo';
 
 const router = express.Router();
 
-router.get('/', findAllTodo);
-router.get('/:todoId', findTodoById);
 router.post('/', validateParams, createTodo);
+router.get('/', findAllTodoById);
+router.get('/:todoId', findTodoById);
 router.put('/:todoId', updateTodo);
 router.put('/:todoId/complete', updateTodoComplete);
 router.delete('/:todoId', deleteTodoById);
-
-// 모든 할 일 검색
-async function findAllTodo(req, res, next) {
-    try {
-        let todo = await Todo.find();
-        if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할 일이 없습니다 !'))
-        res.send(todo);
-    } catch (err) {
-        return next(new exception.ExceptionError(err.message));
-    }
-};
-
-// id로 특정 할 일 검색
-async function findTodoById(req, res, next) {
-    try {
-        let todo = await Todo.findOne().where('id').equals(req.params.todoId);
-        if (!todo) return next(new exception.NotFoundDataError('존재하지 않는 ID입니다 !'))
-        res.send(todo);
-    } catch (err) {
-        return next(new exception.ExceptionError(err.message));
-    }
-}
 
 // 파라미터 검증
 function validateParams(req, res, next) {
@@ -52,6 +30,28 @@ async function createTodo(req, res, next) {
     }
 };
 
+// 모든 할 일 검색
+async function findAllTodoById(req, res, next) {
+    try {
+        let todo = await Todo.find();
+        if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할 일이 없습니다 !'))
+        res.send(todo);
+    } catch (err) {
+        return next(new exception.ExceptionError(err.message));
+    }
+};
+
+// id로 특정 할 일 검색
+async function findTodoById(req, res, next) {
+    try {
+        let todo = await Todo.findOne().where('id').equals(req.params.todoId);
+        if (!todo) return next(new exception.NotFoundDataError('해당 ID로 검색된 할 일이 없습니다. 다시 입력해주세요 !'))
+        res.send(todo);
+    } catch (err) {
+        return next(new exception.ExceptionError(err.message));
+    }
+}
+
 // 할 일 수정
 async function updateTodo(req, res, next) {
     try {
@@ -66,7 +66,7 @@ async function updateTodo(req, res, next) {
 // 검증 후 Todo 정보 변경 - title, description, tags만 수정 가능
 async function validateTodoAndUpdate(todo, req, res) {
     let keys = Object.keys(req.body);
-    if (!todo) throw new exception.NotFoundDataError('존재하지 않는 ID입니다 !');
+    if (!todo) throw new exception.NotFoundDataError('해당 ID로 검색된 할 일이 없습니다. 다시 입력해주세요 !');
     if (!keys.length) throw new exception.NotFoundParameterError('변경에 필요한 파라미터 정보가 없습니다 !');
 
     keys.forEach(key => {
@@ -92,7 +92,7 @@ async function updateTodoComplete(req, res, next) {
 };
 // 검증 후 isComplete 변경
 async function validateIsCompleteAndUpdate(todo, req, res) {
-    if (!todo) throw new exception.NotFoundDataError('존재하지 않는 ID입니다 !');
+    if (!todo) throw new exception.NotFoundDataError('해당 ID로 검색된 할 일이 없습니다. 다시 입력해주세요 !');
     if (todo.isCompleted) throw new exception.InvalidParameterError('이미 완료된 할 일입니다.');
     todo.isCompleted = true;
 
@@ -108,7 +108,7 @@ async function validateIsCompleteAndUpdate(todo, req, res) {
 async function deleteTodoById(req, res, next){
     try {
         let todo = await Todo.findOneAndDelete().where('id').equals(req.params.todoId);
-        if (!todo) return next(new exception.NotFoundDataError('존재하지 않는 ID입니다 !'));
+        if (!todo) return next(new exception.NotFoundDataError('해당 ID로 검색된 할 일이 없습니다. 다시 입력해주세요 !'));
         res.send({"msg": "success"});
     } catch (err) {
         return next(new exception.ExceptionError(err.message));
