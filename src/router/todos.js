@@ -97,7 +97,7 @@ async function validateIsCompleteAndUpdate(todo, req, res) {
     todo.isCompleted = true;
 
     try {
-        await todo.save();   
+        await todo.save();
         res.send(todo);
     } catch (err) {
         throw new exception.ExceptionError(err.message);
@@ -105,11 +105,11 @@ async function validateIsCompleteAndUpdate(todo, req, res) {
 };
 
 // 할 일 삭제
-async function deleteTodoById(req, res, next){
+async function deleteTodoById(req, res, next) {
     try {
         let todo = await Todo.findOneAndDelete().where('id').equals(req.params.todoId);
         if (!todo) return next(new exception.NotFoundDataError('해당 ID로 검색된 할 일이 없습니다. 다시 입력해주세요 !'));
-        res.send({"msg": "success"});
+        res.send({ "msg": "success" });
     } catch (err) {
         return next(new exception.ExceptionError(err.message));
     }
