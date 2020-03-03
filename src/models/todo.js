@@ -26,15 +26,16 @@ var todo = mongoose.Schema({
         default: false
     }
 },
-{
-    versionKey: false,
-    timestamps: true
-});
+    {
+        versionKey: false,
+        timestamps: true
+    });
 
 todo.index({ id: 1 }, { unique: true });
 
-autoIncrement.initialize(mongoose.connection); //중요
-todo.plugin( autoIncrement.plugin, {
+// auto-increse 설정
+autoIncrement.initialize(mongoose.connection);
+todo.plugin(autoIncrement.plugin, {
     model: 'Todo',
     field: 'id',
     startAt: 1
