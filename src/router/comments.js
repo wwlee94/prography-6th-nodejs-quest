@@ -6,7 +6,8 @@ import Comment from '../models/comment';
 const router = express.Router();
 
 router.post('/:todoId/comments', validateParams, createComment);
-router.get('/:todoId/comments', findAllByCommentById)
+router.get('/:todoId/comments', findAllByCommentById);
+router.get('/:todoId/comments/:commentId', findCommentById);
 
 // 파라미터 검증
 async function validateParams(req, res, next) {
@@ -48,6 +49,19 @@ async function findAllByCommentById(req, res, next) {
         if (!todo[0]) return next(new exception.NotFoundDataError('해당 ID로 검색된 할 일이 없습니다. 다시 입력해주세요 !'));
         if (!todo[0].Comments[0]) return next(new exception.NotFoundDataError('등록된 댓글이 없습니다.'));
         res.send(todo[0].Comments);
+    } catch (err) {
+        return next(new exception.ExceptionError(err.message));
+    }
+};
+
+// 댓글 읽기
+async function findCommentById(req, res, next) {
+    try {
+        let comment = await Comment.findOne()
+            .where('id').equals(req.params.commentId)
+            .where('todoId').equals(req.params.todoId);
+        if (!comment) return next(new exception.NotFoundDataError('해당 ID로 검색된 댓글이 없습니다. 다시 입력해주세요 !'));
+        res.send(comment);
     } catch (err) {
         return next(new exception.ExceptionError(err.message));
     }
