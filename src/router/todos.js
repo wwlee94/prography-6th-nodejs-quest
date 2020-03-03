@@ -35,7 +35,7 @@ async function findTodoById(req, res, next) {
 
 // 파라미터 검증
 function validateParams(req, res, next) {
-    if (!Object.keys(req.body).length) return next(new exception.NotFoundParameterError('등록에 필요한 파라미터 정보가 없습니다. !'));
+    if (!Object.keys(req.body).length) return next(new exception.NotFoundParameterError('할 일 등록에 필요한 파라미터 정보가 없습니다. !'));
     if (!req.body.title) return next(new exception.InvalidParameterError('할 일 제목을 입력해주세요 !'));
     if (!req.body.description) return next(new exception.InvalidParameterError('할 일 내용을 입력해주세요 !'));
     else next();
@@ -99,7 +99,7 @@ async function validateIsCompleteAndUpdate(todo, req, res) {
     try {
         await todo.save();   
         res.send(todo);
-    } catch (error) {
+    } catch (err) {
         throw new exception.ExceptionError(err.message);
     }
 };
@@ -110,7 +110,7 @@ async function deleteTodoById(req, res, next){
         let todo = await Todo.findOneAndDelete().where('id').equals(req.params.todoId);
         if (!todo) return next(new exception.NotFoundDataError('존재하지 않는 ID입니다 !'));
         res.send({"msg": "success"});
-    } catch (error) {
+    } catch (err) {
         return next(new exception.ExceptionError(err.message));
     }
 };

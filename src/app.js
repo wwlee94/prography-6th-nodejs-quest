@@ -15,11 +15,12 @@ app.use((req, res, next) => {
 
 // 라우트 설정
 import todos from './router/todos';
-app.use('/todos', todos);
+import comments from './router/comments';
+app.use('/todos', todos, comments);
+
 
 // 로그, 에러 핸들러 
 function logHandler(err, req, res, next) {
-    // if (process.env.NODE_ENV === "test") 
     console.error('[' + new Date() + ']\n' + err.message);
     next(err);
 }
