@@ -13,5 +13,5 @@ mongoose.connect(MONGO_DB_URL, {
 mongoose.set('debug', true);
 
 var db = mongoose.connection;
-db.once('open', function () { console.log('Successfully connected to MongoDB!'); });
-db.on('error', function (err) { console.log('MongoDB Error: ', err); });
+db.once('open', () => { console.log('Successfully connected to MongoDB!'); });
+db.on('error', err => { console.log('MongoDB Error: ', err); });
