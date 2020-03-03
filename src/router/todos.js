@@ -1,6 +1,5 @@
 import express from 'express';
 import * as exception from '../exceptions/exception';
-import util from '../utils/util';
 import Todo from '../models/todo';
 
 const router = express.Router();
@@ -10,6 +9,7 @@ router.get('/:todoId', findTodoById);
 router.post('/', validateParams, createTodo);
 router.put('/:todoId', updateTodo);
 router.put('/:todoId/complete', updateTodoComplete);
+router.delete('/:todoId', deleteTodoById);
 
 // 모든 할 일 검색
 async function findAllTodo(req, res, next) {
@@ -27,7 +27,7 @@ async function findTodoById(req, res, next) {
     try {
         let todo = await Todo.findOne().where('id').equals(req.params.todoId);
         if (!todo) return next(new exception.NotFoundDataError('존재하지 않는 ID입니다 !'))
-        res.send(util.responseMsg(todo));
+        res.send(todo);
     } catch (err) {
         return next(new exception.ExceptionError(err.message));
     }
@@ -78,7 +78,7 @@ async function validateTodoAndUpdate(todo, req, res) {
     } catch (err) {
         throw new exception.ExceptionError(err.message);
     }
-}
+};
 
 // 할 일 완료
 async function updateTodoComplete(req, res, next) {
@@ -89,7 +89,7 @@ async function updateTodoComplete(req, res, next) {
         if (err instanceof exception.ExceptionError) return next(err);
         return next(new exception.ExceptionError(err.message));
     }
-}
+};
 // 검증 후 isComplete 변경
 async function validateIsCompleteAndUpdate(todo, req, res) {
     if (!todo) throw new exception.NotFoundDataError('존재하지 않는 ID입니다 !');
@@ -102,5 +102,16 @@ async function validateIsCompleteAndUpdate(todo, req, res) {
     } catch (error) {
         throw new exception.ExceptionError(err.message);
     }
-}
+};
+
+// 할 일 삭제
+async function deleteTodoById(req, res, next){
+    try {
+        let todo = await Todo.findOneAndDelete().where('id').equals(req.params.todoId);
+        if (!todo) return next(new exception.NotFoundDataError('존재하지 않는 ID입니다 !'));
+        res.send({"msg": "success"});
+    } catch (error) {
+        return next(new exception.ExceptionError(err.message));
+    }
+};
 export default router;
