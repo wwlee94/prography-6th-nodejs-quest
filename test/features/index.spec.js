@@ -1,6 +1,9 @@
 /**
  * 테스트 시나리오에 맞춰서 순차 실행
  */
+import 'jest';
+jest.setTimeout(10000);
+
 import db from '../../src/db';
 import Todo from '../../src/models/todo';
 import Comment from '../../src/models/comment';
