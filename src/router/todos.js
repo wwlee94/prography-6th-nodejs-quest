@@ -32,18 +32,18 @@ async function createTodo(req, res, next) {
 
 // 모든 할 일 검색
 async function findAllTodo(req, res, next) {
-    let filterKey; // 필터할 키
-    let filterVal; // 필터할 값
-    let sorting = {}; // 정렬할 키, 값
+    let filterKey; // 필터의 기준이 될 필드
+    let filterVal; // 필터 할 값 Ex) 과제
+    let sorting = {}; // 정렬 할 키, 값
     let todo;
     try {
-        // 검색 쿼리 파라미터가 존재할 때
+        // 검색 쿼리 파라미터가 존재할 때 id, title, description, tags로만 검색 가능
         let filter = Object.keys(req.query).filter(x => ['id', 'title', 'description', 'tags'].includes(x))[0];
         if (filter) {
             filterKey = filter;
             filterVal = req.query[filter];
         }
-        // 정렬 쿼리 파라미터가 존재할 때
+        // 정렬 쿼리 파라미터가 존재할 때 id, title, createdAt, updatedAt로만 정렬 가능
         let order = req.query.order;
         if (order) {
             let key = Object.keys(order)[0];
