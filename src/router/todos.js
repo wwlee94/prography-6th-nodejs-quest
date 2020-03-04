@@ -1,6 +1,7 @@
 import express from 'express';
 import * as exception from '../exceptions/exception';
 import Todo from '../models/todo';
+import '../utils/util';
 
 const router = express.Router();
 
@@ -32,21 +33,40 @@ async function createTodo(req, res, next) {
 
 // 모든 할 일 검색
 async function findAllTodo(req, res, next) {
-    let order = req.query.order;
+    let filter = {};
     let sorting = {};
     let todo;
     try {
+        // 검색 쿼리 파라미터가 존재할 때
+        let search = Object.keys(req.query).filter(x => ['id', 'title', 'description', 'tags'].includes(x))[0];
+        let searchKey;
+        let searchVal;
+        if (search) {
+            console.log('search 존재 할 때');
+            searchKey = search;
+            searchVal = req.query[search];
+        }
         // 정렬 쿼리 파라미터가 존재할 때
+        let order = req.query.order;
         if (order) {
+            console.log('order 존재 할 때');
             let key = Object.keys(order)[0];
             if (!['id', 'title', 'createdAt', 'updatedAt'].includes(key))
                 return next(new exception.InvalidParameterError("['id', 'title', 'createdAt', 'updatedAt'] 필드만 정렬 가능합니다 !"))
             if (!['asc', 'desc'].includes(order[key]))
                 return next(new exception.InvalidParameterError("['asc', 'desc'] 오름차순, 내림차순으로만 정렬 가능합니다 !"))
             sorting[key] = order[key];
-            todo = await Todo.find().sort(sorting);
         }
-        else todo = await Todo.find();
+
+        // 기본 검색 or 정렬
+        if (!search) todo = await Todo.find().sort(sorting);
+        else{
+            // tag 검색 + 정렬
+            if(searchKey === 'tags') todo = await Todo.find().sort(sorting).in(searchKey, searchVal);
+            // 그외 필드 검색 + 정렬
+            else todo = await Todo.find().sort(sorting).regex(searchKey, new RegExp('.*'+searchVal+'.*', 'i'));
+        }
+
         if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할 일이 없습니다 !'))
         res.send(todo);
 
