@@ -1,7 +1,6 @@
 import express from 'express';
 import * as exception from '../exceptions/exception';
 import Todo from '../models/todo';
-import '../utils/util';
 
 const router = express.Router();
 
