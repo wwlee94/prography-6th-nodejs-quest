@@ -5,7 +5,7 @@ const app = express();
 
 // app 미들웨어
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.urlencoded({ extended: true })); // qs의 기능 포함
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE');
