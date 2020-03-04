@@ -33,38 +33,35 @@ async function createTodo(req, res, next) {
 
 // 모든 할 일 검색
 async function findAllTodo(req, res, next) {
-    let filter = {};
-    let sorting = {};
+    let filterKey; // 필터할 키
+    let filterVal; // 필터할 값
+    let sorting = {}; // 정렬할 키, 값
     let todo;
     try {
         // 검색 쿼리 파라미터가 존재할 때
-        let search = Object.keys(req.query).filter(x => ['id', 'title', 'description', 'tags'].includes(x))[0];
-        let searchKey;
-        let searchVal;
-        if (search) {
-            console.log('search 존재 할 때');
-            searchKey = search;
-            searchVal = req.query[search];
+        let filter = Object.keys(req.query).filter(x => ['id', 'title', 'description', 'tags'].includes(x))[0];
+        if (filter) {
+            filterKey = filter;
+            filterVal = req.query[filter];
         }
         // 정렬 쿼리 파라미터가 존재할 때
         let order = req.query.order;
         if (order) {
-            console.log('order 존재 할 때');
             let key = Object.keys(order)[0];
             if (!['id', 'title', 'createdAt', 'updatedAt'].includes(key))
-                return next(new exception.InvalidParameterError("['id', 'title', 'createdAt', 'updatedAt'] 필드만 정렬 가능합니다 !"))
+                return next(new exception.InvalidParameterErrror("['id', 'title', 'createdAt', 'updatedAt'] 필드만 정렬 가능합니다 !"));
             if (!['asc', 'desc'].includes(order[key]))
-                return next(new exception.InvalidParameterError("['asc', 'desc'] 오름차순, 내림차순으로만 정렬 가능합니다 !"))
+                return next(new exception.InvalidParameterError("['asc', 'desc'] 오름차순, 내림차순으로만 정렬 가능합니다 !"));
             sorting[key] = order[key];
         }
 
         // 기본 검색 or 정렬
-        if (!search) todo = await Todo.find().sort(sorting);
+        if (!filter) todo = await Todo.find().sort(sorting);
         else{
             // tag 검색 + 정렬
-            if(searchKey === 'tags') todo = await Todo.find().sort(sorting).in(searchKey, searchVal);
+            if(filterKey === 'tags') todo = await Todo.find().sort(sorting).in(filterKey, filterVal);
             // 그외 필드 검색 + 정렬
-            else todo = await Todo.find().sort(sorting).regex(searchKey, new RegExp('.*'+searchVal+'.*', 'i'));
+            else todo = await Todo.find().sort(sorting).regex(filterKey, new RegExp('.*'+filterVal+'.*', 'i'));
         }
 
         if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할 일이 없습니다 !'))
