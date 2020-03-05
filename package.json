@@ -15,6 +15,7 @@
     "mongoose": "^5.9.2",
     "mongoose-auto-increment": "^5.0.1",
     "multer": "^1.4.2",
+    "qs": "^6.9.1",
     "supertest": "^4.0.2"
   },
   "devDependencies": {
@@ -27,7 +28,7 @@
     "nodemon": "^2.0.2"
   },
   "scripts": {
-    "test": "jest ./test/features/index.spec.js",
+    "test": "NODE_ENV=test jest ./test/features/index.spec.js",
     "start": "nodemon"
   },
   "repository": {
