@@ -56,11 +56,11 @@ async function findAllTodo(req, res, next) {
 
         // 기본 검색 or 정렬
         if (!filter) todo = await Todo.find().sort(sorting);
-        else{
+        else {
             // tag 검색 + 정렬
-            if(filterKey === 'tags') todo = await Todo.find().sort(sorting).in(filterKey, filterVal);
+            if (filterKey === 'tags') todo = await Todo.find().sort(sorting).in(filterKey, filterVal);
             // 그외 필드 검색 + 정렬
-            else todo = await Todo.find().sort(sorting).regex(filterKey, new RegExp('.*'+filterVal+'.*', 'i'));
+            else todo = await Todo.find().sort(sorting).regex(filterKey, new RegExp('.*' + filterVal + '.*', 'i'));
         }
 
         if (!Object.keys(todo).length) return next(new exception.NotFoundDataError('검색된 할 일이 없습니다 !'))

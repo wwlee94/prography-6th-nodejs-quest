@@ -6,7 +6,7 @@ let MONGO_DB_URL = process.env.DB_HOST_URL;
 
 // MongoDB 설정
 mongoose.Promise = global.Promise;
-if(process.env.NODE_ENV === "test"){
+if (process.env.NODE_ENV === "test") {
     console.log('NODE_ENV: test');
     MONGO_DB_URL = process.env.TEST_DB_HOST_URL;
 }

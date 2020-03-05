@@ -92,7 +92,7 @@ async function updateComment(req, res, next) {
 };
 
 // 댓글 삭제
-async function deleteCommentById(req, res, next){
+async function deleteCommentById(req, res, next) {
     try {
         let comment = await Comment.findOneAndDelete()
             .where('id').equals(req.params.commentId)
