@@ -14,7 +14,7 @@ router.delete('/:todoId/comments/:commentId', deleteCommentById);
 // 파라미터 검증
 async function validateParams(req, res, next) {
     if (!Object.keys(req.body).length) return next(new exception.NotFoundParameterError('댓글 등록에 필요한 파라미터 정보가 없습니다. !'));
-    if (!req.body.contents) return next(new exception.InvalidParameterError('할 일의 댓글 내용을 입력해주세요 !'));
+    if (!req.body.contents || !req.body.contents.trim()) return next(new exception.InvalidParameterError('할 일의 댓글 내용을 입력해주세요 !'));
 
     try {
         let todo = await Todo.findOne().where('id').equals(req.params.todoId);
@@ -72,7 +72,7 @@ async function findCommentById(req, res, next) {
 // 댓글 수정
 async function updateComment(req, res, next) {
     if (!Object.keys(req.body).length) return next(new exception.NotFoundParameterError('댓글 수정에 필요한 파라미터 정보가 없습니다. !'));
-    if (!req.body.contents) return next(new exception.InvalidParameterError('수정할 댓글 내용을 입력해주세요 !'));
+    if (!req.body.contents || !req.body.contents.trim()) return next(new exception.InvalidParameterError('수정할 댓글 내용을 입력해주세요 !'));
     try {
         let comment = await Comment.findOneAndUpdate(
             { id: Number(req.params.commentId), todoId: Number(req.params.todoId) },

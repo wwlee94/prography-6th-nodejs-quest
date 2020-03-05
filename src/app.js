@@ -19,12 +19,12 @@ import comments from './router/comments';
 app.use('/todos', todos, comments);
 
 
-// 로그, 에러 핸들러 
-function logHandler(err, req, res, next) {
+// 로그, 에러 핸들러
+const logHandler = (err, req, res, next) => {
     console.error('[' + new Date() + ']\n' + err.message);
     next(err);
 }
-function errorHandler(err, req, res, next) {
+const errorHandler = (err, req, res, next) => {
     res.status(err.status || 500);
     res.type('json').send(JSON.stringify({ error: err || 'Uncaught Error !' }, null, 4));
 }

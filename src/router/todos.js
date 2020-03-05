@@ -14,8 +14,8 @@ router.delete('/:todoId', deleteTodoById);
 // 파라미터 검증
 function validateParams(req, res, next) {
     if (!Object.keys(req.body).length) return next(new exception.NotFoundParameterError('할 일 등록에 필요한 파라미터 정보가 없습니다. !'));
-    if (!req.body.title) return next(new exception.InvalidParameterError('할 일 제목을 입력해주세요 !'));
-    if (!req.body.description) return next(new exception.InvalidParameterError('할 일 내용을 입력해주세요 !'));
+    if (!req.body.title || !req.body.title.trim()) return next(new exception.InvalidParameterError('할 일 제목을 입력해주세요 !'));
+    if (!req.body.description || !req.body.description.trim()) return next(new exception.InvalidParameterError('할 일 내용을 입력해주세요 !'));
     else next();
 };
 
@@ -97,12 +97,16 @@ async function updateTodo(req, res, next) {
 
 // 검증 후 Todo 정보 변경 - title, description, tags만 수정 가능
 async function validateTodoAndUpdate(todo, req, res) {
-    let keys = Object.keys(req.body);
+    let body = req.body;
+    let keys = Object.keys(body);
     if (!todo) throw new exception.NotFoundDataError('해당 ID로 검색된 할 일이 없습니다. 다시 입력해주세요 !');
     if (!keys.length) throw new exception.NotFoundParameterError('변경에 필요한 파라미터 정보가 없습니다 !');
 
     keys.forEach(key => {
-        if (['title', 'description', 'tags'].includes(key)) todo[key] = req.body[key];
+        if (['title', 'description', 'tags'].includes(key)) {
+            if (!body[key] || !body[key].trim()) throw new exception.InvalidParameterError(`할 일의 ${key} 내용을 입력해주세요 !`);
+            todo[key] = body[key];
+        }
     });
     try {
         await todo.save();
