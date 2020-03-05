@@ -1,6 +1,7 @@
 import express from 'express';
 import * as exception from '../exceptions/exception';
 import Todo from '../models/todo';
+import Comment from '../models/comment';
 
 const router = express.Router();
 
@@ -148,6 +149,7 @@ async function deleteTodoById(req, res, next) {
     try {
         let todo = await Todo.findOneAndDelete().where('id').equals(req.params.todoId);
         if (!todo) return next(new exception.NotFoundDataError('해당 ID로 검색된 할 일이 없습니다. 다시 입력해주세요 !'));
+        let comment = await Comment.deleteMany().where('todoId').equals(req.params.todoId); // 댓글도 함께 제거 !
         res.send({ "msg": "success" });
 
     } catch (err) {
